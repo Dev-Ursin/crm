@@ -1,0 +1,40 @@
+body {
+  background: radial-gradient(circle at top left, #f5f7fb, #eaf0f7 35%, #fdfdff 75%);
+  min-height: 100vh;
+}
+
+.metric-card {
+  border: none;
+  border-radius: 14px;
+}
+
+.metric-card .card-body {
+  padding: 1.5rem;
+}
+
+.badge {
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #eef1f4;
+}
+
+.card {
+  border: none;
+  border-radius: 14px;
+}
+
+.btn-primary {
+  box-shadow: 0 8px 20px rgba(13, 110, 253, 0.25);
+}
+
+.btn-outline-primary {
+  border-width: 2px;
+}
+
+.navbar-brand {
+  letter-spacing: 0.02em;
+}

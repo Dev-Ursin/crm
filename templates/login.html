@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-4 text-center">Acessar o CRM</h1>
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Usuário</label>
+            <input type="text" class="form-control" name="username" required autofocus>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Senha</label>
+            <input type="password" class="form-control" name="password" required>
+          </div>
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary" type="submit">Entrar</button>
+          </div>
+          <p class="text-muted small mt-3 text-center">
+            Padrão: usuário <code>admin</code> e senha <code>admin</code>. Defina CRM_USER e CRM_PASSWORD para alterar.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

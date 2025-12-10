@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex align-items-center mb-3 justify-content-between">
+  <div>
+    <h1 class="h4 mb-1">Painel de Relacionamento</h1>
+    <p class="text-muted mb-0">Acompanhe o funil e os contatos mais recentes</p>
+  </div>
+  <div class="d-flex gap-2">
+    <form action="{{ url_for('download_clientes') }}" method="get">
+      <button class="btn btn-outline-secondary">Baixar CSV</button>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card metric-card shadow-sm">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Total de contatos</p>
+        <p class="display-6 fw-semibold mb-0">{{ metrics.total }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card metric-card shadow-sm">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Leads</p>
+        <p class="display-6 fw-semibold mb-0">{{ metrics.leads }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card metric-card shadow-sm">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Prospects</p>
+        <p class="display-6 fw-semibold mb-0">{{ metrics.prospects }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card metric-card shadow-sm">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Clientes</p>
+        <p class="display-6 fw-semibold mb-0">{{ metrics.clientes }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card metric-card shadow-sm">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Faturamento estimado</p>
+        <p class="display-6 fw-semibold mb-0">R$ {{ metrics.faturamento | int }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="h5 mb-1">Distribuição do funil</h2>
+            <p class="text-muted small mb-0">Status dos contatos na planilha</p>
+          </div>
+          <span class="badge text-bg-primary">Dinâmico</span>
+        </div>
+        <canvas id="funilChart" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="h5 mb-1">Últimos contatos</h2>
+            <p class="text-muted small mb-0">Baseado na coluna <code>ultima_interacao</code></p>
+          </div>
+          <span class="badge text-bg-success">Atualizado</span>
+        </div>
+        <div class="list-group list-group-flush">
+          {% for cliente in clientes %}
+          <div class="list-group-item px-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">{{ cliente.nome }}</div>
+                <div class="text-muted small">{{ cliente.email }} · {{ cliente.empresa }}</div>
+              </div>
+              <span class="badge text-bg-secondary">{{ cliente.status }}</span>
+            </div>
+            <div class="text-muted small">Última interação: {{ cliente.ultima_interacao }}</div>
+          </div>
+          {% else %}
+          <p class="text-muted mb-0">Sem registros ainda.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Cadastrar contato manualmente</h2>
+        <form class="row g-3" action="{{ url_for('novo_cliente') }}" method="post">
+          <div class="col-md-6">
+            <label class="form-label">Nome</label>
+            <input type="text" class="form-control" name="nome" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">E-mail</label>
+            <input type="email" class="form-control" name="email" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Telefone</label>
+            <input type="text" class="form-control" name="telefone">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Empresa</label>
+            <input type="text" class="form-control" name="empresa">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status">
+              <option value="Lead">Lead</option>
+              <option value="Prospect">Prospect</option>
+              <option value="Cliente">Cliente</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Última interação</label>
+            <input type="date" class="form-control" name="ultima_interacao">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Valor estimado (R$)</label>
+            <input type="number" step="0.01" class="form-control" name="valor_estm">
+          </div>
+          <div class="col-12 d-grid">
+            <button class="btn btn-primary">Adicionar contato</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Importar planilha</h2>
+        <p class="text-muted small">Aceita CSV com cabeçalhos. No mínimo deve ter a coluna <code>nome</code>. Campos adicionais são mantidos.</p>
+        <form action="{{ url_for('upload_clientes') }}" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3">
+          <input class="form-control" type="file" name="arquivo" accept=".csv" required>
+          <button class="btn btn-outline-primary" type="submit">Enviar e substituir base</button>
+        </form>
+        <hr>
+        <p class="small mb-1">Dicas de planilha:</p>
+        <ul class="small text-muted mb-0">
+          <li>Colunas sugeridas: nome, email, telefone, empresa, status, ultima_interacao, valor_estm.</li>
+          <li>Use <code>exportar</code> do seu ERP/CRM para migrar rapidamente.</li>
+          <li>Mantenha datas no formato AAAA-MM-DD para gráficos consistentes.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const ctx = document.getElementById('funilChart');
+  const funilChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{ status_labels|tojson }},
+      datasets: [{
+        label: 'Contatos',
+        data: {{ status_values|tojson }},
+        backgroundColor: ['#0d6efd', '#ffc107', '#198754'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.parsed.y} registros`
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+</script>
+{% endblock %}
